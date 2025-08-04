@@ -8,8 +8,8 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
-//import java.awt.event.ActionEvent;
-//import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JComboBox;
 import javax.swing.JRadioButton;
 import javax.swing.JCheckBox;
@@ -53,7 +53,7 @@ public class GUIFrame extends JFrame{
     public GUIFrame() {
         setTitle("Gym Membership");
         setSize(500,500);
-        
+         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //Create Panel
         jpHeading = new JPanel(new FlowLayout(FlowLayout.CENTER));
         
@@ -116,7 +116,12 @@ public class GUIFrame extends JFrame{
         jspScrollable = new JScrollPane(comments,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         //Button
         jbApply = new JButton("Apply");
-        
+        jbApply.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                handleApply();
+            }
+        });
         //Components  to panel
         jpHeading.add(jlHeading);
         //JPanel Name
@@ -161,10 +166,51 @@ public class GUIFrame extends JFrame{
         jpMain.add(jpHeadingClientCombined,BorderLayout.NORTH);
         jpMain.add(jpMembershipCommentsCombined,BorderLayout.CENTER);
         jpMain.add(jpButtons, BorderLayout.SOUTH);
+        add(jpMain);
         //Set Visible
         pack();
         setVisible(true);
     }
-    
+     // Method that handles Apply button click
+    private void handleApply() {
+        String name = jtfName.getText().trim();
+        String surname = jtfSurname.getText().trim();
+        String idNo = jtfIdNo.getText().trim();
+        String gender = (String) jcbGender.getSelectedItem();
+
+        String contractType = "";
+        if (jrbMonthToMonth.isSelected()) {
+            contractType = "Month-to-month";
+        } else if (jrbSixMonth.isSelected()) {
+            contractType = "Six Month";
+        } else if (jrbAnnual.isSelected()) {
+            contractType = "Annual";
+        }
+
+        String personalTrainer = jcbPersoalTrainer.isSelected() ? "Yes" : "No";
+
+        // Simple validation
+        if (name.isEmpty() || surname.isEmpty() || idNo.isEmpty() || contractType.isEmpty()) {
+            comments.append("⚠️ Please complete all required fields before applying.\n\n");
+            return;
+        }
+
+        // Append applicant info
+        comments.append("✅ New Application Received:\n");
+        comments.append("Name: " + name + "\n");
+        comments.append("Surname: " + surname + "\n");
+        comments.append("ID No: " + idNo + "\n");
+        comments.append("Gender: " + gender + "\n");
+        comments.append("Contract Type: " + contractType + "\n");
+        comments.append("Personal Trainer: " + personalTrainer + "\n");
+        comments.append("------------------------------\n");
+
+        // Reset form fields
+        jtfName.setText("");
+        jtfSurname.setText("");
+        jtfIdNo.setText("");
+        btnGrp.clearSelection();
+        jcbPersoalTrainer.setSelected(false);
+    }
     
 }
